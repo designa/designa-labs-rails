@@ -1,0 +1,29 @@
+version: '3.1'
+
+services:
+  app:
+    image: jmscarpa/rails6:latest
+    container_name: designa-labs-app
+    command: bash -c "rm -f tmp/pids/server.pid && bundle install && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    stdin_open: true
+    tty: true
+    ports:
+      - 3000:3000
+    volumes:
+      - ./:/myapp
+    environment:
+      - RAILS_ENV=development
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - db
+      - gems:/.gems
+  db:
+    image: postgres
+    volumes:
+      - db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: password
+
+volumes:
+  db:
+  gems:
